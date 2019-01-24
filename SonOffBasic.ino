@@ -78,7 +78,6 @@ void fixWiFi() {
   if (0 == WiFifix || ((millis() - WiFifix) > 10000)) {
     if (Homie.isConfigured() == 1) {
       Homie.getLogger() << "Wifi-state:" << WiFi.status() << " | MQTT-state:" << Homie.getMqttClient().connected() << " | HomieConfig-state:" << Homie.isConfigured() << endl;
-
       if (!Homie.getMqttClient().connected() || WiFi.status() != 3) {
         if (0 == problemDetected) {
           if (WiFi.status() != 3) {
