@@ -10,6 +10,7 @@ const int PIN_BUTTON = 0;
 
 unsigned long WiFifix = 0;
 unsigned long problemDetected = 0;
+int problemCount = 0;
 String problemCause;
 
 unsigned long buttonDownTime = 0;
@@ -78,6 +79,7 @@ void fixWiFi() {
   if (0 == WiFifix || ((millis() - WiFifix) > 10000)) {
     if (Homie.isConfigured() == 1) {
       Homie.getLogger() << "Wifi-state:" << WiFi.status() << " | MQTT-state:" << Homie.getMqttClient().connected() << " | HomieConfig-state:" << Homie.isConfigured() << endl;
+
       if (!Homie.getMqttClient().connected() || WiFi.status() != 3) {
         if (0 == problemDetected) {
           if (WiFi.status() != 3) {
@@ -89,11 +91,15 @@ void fixWiFi() {
           Homie.getLogger() << "Connectivity in problematic state --> " << problemCause << endl;
           problemDetected = millis();
         }
-        else if ((millis() - problemDetected) > 60000) {
+        else if ((millis() - problemDetected) > 60000 && problemCount < 5) {
+          problemCount = (problemCount + 1);
           Homie.getLogger() << "Connectivity in problematic state --> " << problemCause << "/n This remained for 60 seconds. Disconnecting WiFi to start over." << endl;
           problemDetected = 0;
           problemCause = "";
           WiFi.disconnect();
+        }
+        else if ((millis() - problemDetected) > 60000 && (problemCount >= 5)) {
+          Homie.reboot();
         }
       }
     }
