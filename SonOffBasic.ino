@@ -95,6 +95,7 @@ void fixWiFi() {
           problemCount = (problemCount + 1);
           Homie.getLogger() << "Connectivity in problematic state --> " << problemCause << "/n This remained for 60 seconds. Disconnecting WiFi to start over." << endl;
           problemDetected = 0;
+          problemCount = 0;
           problemCause = "";
           WiFi.disconnect();
         }
