@@ -103,6 +103,9 @@ void fixWiFi() {
           Homie.reboot();
         }
       }
+      else if (Homie.getMqttClient().connected() || WiFi.status() == 3) {
+        problemCount = 0;
+      }
     }
   }
   WiFifix = millis();
